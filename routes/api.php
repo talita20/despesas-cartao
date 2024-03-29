@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\CardController;
+use App\Http\Controllers\Api\ExpensesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
@@ -23,7 +24,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::middleware('auth:sanctum')->group(function() {
     Route::apiResource('/cards', CardController::class);
-
+    Route::apiResource('/expenses', ExpensesController::class);
 });
 
 Route::apiResource('/users', UserController::class);
