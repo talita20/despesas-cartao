@@ -4,12 +4,15 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRequest;
-use Illuminate\Http\Request;
 use App\Models\User;
-use Exception;
 
 class UserController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum')->only(['index','show','update']);
+    }
 
     public function index()
     {

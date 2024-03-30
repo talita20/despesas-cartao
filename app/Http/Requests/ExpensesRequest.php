@@ -22,7 +22,7 @@ class ExpensesRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'value' => 'required|min:0'
+            'value' => 'required|numeric|gte:0'
         ];
 
         return $rules;

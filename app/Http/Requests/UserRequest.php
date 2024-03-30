@@ -42,8 +42,8 @@ class UserRequest extends FormRequest
     public function messages()
     {
         return [
-            'required' => 'O campo :attribute é obrigatório',
-            'unique' => 'O campo :attribute já está em uso',
+            'required' => 'O campo :attribute é obrigatório.',
+            'unique' => 'O campo :attribute já está em uso.',
             'name.min' => 'O campo nome necessita de pelo menos 3 caracteres.',
             'document.*' => 'Formato inválido para o campo documento.',
             'password.*' => 'A senha deve conter pelo menos 8 caracteres.',

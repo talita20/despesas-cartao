@@ -5,7 +5,7 @@ use App\Http\Controllers\Api\ExpensesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,14 +29,16 @@ Route::middleware('auth:sanctum')->group(function() {
 
 Route::apiResource('/users', UserController::class);
 
-Route::post('/login', function (Request $request) {
-    $credentials = $request->only(['email', 'password']);
-    if(Auth::attempt($credentials) === false){
-        return response()->json('Não autorizado', 401);
-    }
+Route::post('/login', [AuthController::class, 'login']);
 
-    $user = Auth::user();
-    $token = $user->createToken('token');
+// Route::post('/login', function (Request $request) {
+//     $credentials = $request->only(['email', 'password']);
+//     if(Auth::attempt($credentials) === false){
+//         return response()->json('Não autorizado', 401);
+//     }
 
-    return response()->json($token->plainTextToken);
-});
+//     $user = Auth::user();
+//     $token = $user->createToken('token');
+
+//     return response()->json($token->plainTextToken);
+// });

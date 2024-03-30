@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
             $table->string('name');
-            $table->string('number', 16);
+            $table->string('number', 16)->unique();
             $table->string('expire_date');
             $table->string('cvc', 3);
             $table->float('limit_balance', 10, 2);
