@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CardRequest;
 use App\Models\Card;
 
+use function App\Helpers\checkFormatDate;
+
 class CardController extends Controller
 {
     public function index()
@@ -29,6 +31,9 @@ class CardController extends Controller
 
     public function store(CardRequest $request)
     {
+        if(checkFormatDate($request->expire_date) === false) {
+            return response()->json(['message' => 'Data de expiração do cartão inválida.'], 406);
+        }
         Card::create($request->all());
         return response()->json($request->all(), 201);       
     }

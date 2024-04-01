@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRequest;
 use App\Models\User;
 
+use function App\Helpers\formatDocument;
+use function App\Helpers\checkDocument;
+
 class UserController extends Controller
 {
 
@@ -30,6 +33,10 @@ class UserController extends Controller
 
     public function store(UserRequest $request)
     {
+        if(checkDocument(formatDocument($request->document)) === false) {
+            return response()->json(['message' => 'Documento inválido'], 406);
+        }
+
         User::create($request->all());
         return response()->json($request->all(), 201);       
     }
