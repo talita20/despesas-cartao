@@ -36,11 +36,6 @@ class CardRequest extends FormRequest
                 'current_balance' => 'required|numeric|gte:0'
             ];
         }
-
-        $rules['user_id'] = [
-            'required',
-            Rule::exists('users', 'id')->where('id', $this->user_id)
-        ];
         
         return $rules;
     }

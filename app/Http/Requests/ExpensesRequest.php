@@ -22,9 +22,18 @@ class ExpensesRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'value' => 'required|numeric|gte:0'
+            'value' => 'required|numeric|gt:0'
         ];
 
         return $rules;
+    }
+
+    public function messages()
+    {
+        return [
+            'required' => 'O campo :attribute é obrigatório.',
+            'number.*' => 'Formato inválido do campo :attribute.',
+            'gt' => 'O campo :attribute deve ser maior que zero.'
+        ];
     }
 }

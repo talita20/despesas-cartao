@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('number', 16)->unique();
             $table->string('expire_date');
-            $table->string('cvc', 3);
+            $table->string('cvc', 4);
             $table->float('limit_balance', 10, 2);
             $table->float('current_balance', 10, 2);
             $table->string('card_flag');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRequest;
 use App\Models\User;
@@ -19,22 +20,28 @@ class UserController extends Controller
 
     public function index()
     {
-        return User::all();
+        if(AuthController::isAdmin() === true){
+            return User::all();
+        }
+        return response()->json(['message' => 'Seu usuário não possui permissão para acessar os dados.'], 403);
     }
     
-    public function show(int $user)
+    public function show(int $user_id)
     {
-        $userModel = User::find($user);
-        if(empty($userModel)){
-            return response()->json(['message' => 'Usuário não encontrado'], 404);
+        if(AuthController::isAdmin() === true){
+            $user = User::find($user_id);
+            if(empty($user)){
+                return response()->json(['message' => 'Usuário não encontrado.'], 404);
+            }
+            return $user;
         }
-        return $userModel;
+        return response()->json(['message' => 'Seu usuário não possui permissão para acessar os dados.'], 403);
     }
 
     public function store(UserRequest $request)
     {
         if(checkDocument(formatDocument($request->document)) === false) {
-            return response()->json(['message' => 'Documento inválido'], 406);
+            return response()->json(['message' => 'Documento inválido.'], 422);
         }
 
         User::create($request->all());
@@ -43,6 +50,16 @@ class UserController extends Controller
     
     public function update(User $user, UserRequest $request)
     {
+        if(AuthController::isAdmin() === true){
+            $user->fill($request->all());
+            $user->save();
+            return response()->json($request->all(), 201);
+        }
+
+        $user_id = AuthController::getUserByToken()->id;
+        if($user_id != $user->id) {
+            return response()->json(['message' => 'Seu usuário não possui permissão para editar os dados.'], 403);
+        }
         $user->fill($request->all());
         $user->save();
         return response()->json($request->all(), 201);
