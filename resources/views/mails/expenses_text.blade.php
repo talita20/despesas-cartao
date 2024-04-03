@@ -1,0 +1,2 @@
+Olá!
+{{ $data['message'] }}

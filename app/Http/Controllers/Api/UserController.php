@@ -7,8 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRequest;
 use App\Models\User;
 
-use function App\Helpers\formatDocument;
-use function App\Helpers\checkDocument;
+use function App\Helpers\checkTypeDocument;
 
 class UserController extends Controller
 {
@@ -40,7 +39,7 @@ class UserController extends Controller
 
     public function store(UserRequest $request)
     {
-        if(checkDocument(formatDocument($request->document)) === false) {
+        if(checkTypeDocument($request->document) === false) {
             return response()->json(['message' => 'Documento inválido.'], 422);
         }
 
@@ -63,5 +62,15 @@ class UserController extends Controller
         $user->fill($request->all());
         $user->save();
         return response()->json($request->all(), 201);
+    }
+
+    public static function getEmailAllAdmins()
+    {
+        $emails = User::where('level', 'Administrador')->get('email');
+        $emailList = array();
+        foreach ($emails as $e) {
+            array_push($emailList, $e->email);
+        }
+        return $emailList;
     }
 }

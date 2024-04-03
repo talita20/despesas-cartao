@@ -30,15 +30,3 @@ Route::middleware('auth:sanctum')->group(function() {
 Route::apiResource('/users', UserController::class);
 
 Route::post('/login', [AuthController::class, 'login']);
-
-// Route::post('/login', function (Request $request) {
-//     $credentials = $request->only(['email', 'password']);
-//     if(Auth::attempt($credentials) === false){
-//         return response()->json('Não autorizado', 401);
-//     }
-
-//     $user = Auth::user();
-//     $token = $user->createToken('token');
-
-//     return response()->json($token->plainTextToken);
-// });

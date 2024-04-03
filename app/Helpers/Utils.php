@@ -11,90 +11,77 @@ function chechBalance($value, $currentBalance)
     return $newBalance;
 }
 
-function formatDocument($document){
+function checkTypeDocument($document)
+{
     if(empty($document)) {
         return false;
     }
-    return str_replace(array('.', ',', '-', '/', '_'), '', trim($document));
+    if(strlen($document) == 11){
+        return checkDocumentCpf($document);
+    }
+    if(strlen($document) == 14){
+        return checkDocumentCnpj($document);
+    }
+    return false;
+
 }
 
-function checkDocument($document)
+function checkDocumentCpf($cpf)
 {
-    if (empty($document)) {
+    if(empty($cpf)) {
+        return false;
+    }
+    
+    $cpf = preg_replace( '/[^0-9]/is', '', $cpf );
+     
+    if (strlen($cpf) != 11) {
         return false;
     }
 
-    $document = preg_replace("/[^0-9]/", "", $document);
+    if (preg_match('/(\d)\1{10}/', $cpf)) {
+        return false;
+    }
 
-    if (strlen($document) <= 11) {
-        $cpf = str_pad($document, 11, '0', STR_PAD_LEFT);
-
-        if (
-            $cpf == '00000000000' ||
-            $cpf == '11111111111' ||
-            $cpf == '22222222222' ||
-            $cpf == '33333333333' ||
-            $cpf == '44444444444' ||
-            $cpf == '55555555555' ||
-            $cpf == '66666666666' ||
-            $cpf == '77777777777' ||
-            $cpf == '88888888888' ||
-            $cpf == '99999999999'
-        ) {
-            return false;
+    for ($t = 9; $t < 11; $t++) {
+        for ($d = 0, $c = 0; $c < $t; $c++) {
+            $d += $cpf[$c] * (($t + 1) - $c);
         }
-
-        for ($t = 9; $t < 11; $t++) {
-            for ($d = 0, $c = 0; $c < $t; $c++) {
-                $d += $cpf[$c] * ( ( $t + 1 ) - $c );
-            }
-            $d = ( ( 10 * $d ) % 11 ) % 10;
-            if ($cpf[$c] != $d) {
-                return false;
-            }
-        }
-        return $cpf;
-    } else {
-        $cnpj = str_pad($document, 14, '0', STR_PAD_LEFT);
-        if (
-            $cnpj == '00000000000000' ||
-            $cnpj == '11111111111111' ||
-            $cnpj == '22222222222222' ||
-            $cnpj == '33333333333333' ||
-            $cnpj == '44444444444444' ||
-            $cnpj == '55555555555555' ||
-            $cnpj == '66666666666666' ||
-            $cnpj == '77777777777777' ||
-            $cnpj == '88888888888888' ||
-            $cnpj == '99999999999999'
-        ) {
-            return false;
-        }
-
-        $j = 5;
-        $k = 6;
-        $soma1 = "";
-        $soma2 = "";
-
-        for ($i = 0; $i < 13; $i++) {
-            $j = $j == 1 ? 9 : $j;
-            $k = $k == 1 ? 9 : $k;
-            $soma2 += ( $cnpj[$i] * $k );
-            if ($i < 12) {
-                $soma1 += ($cnpj[$i] * $j);
-            }
-            $k--;
-            $j--;
-        }
-        $digito1 = $soma1 % 11 < 2 ? 0 : 11 - $soma1 % 11;
-        $digito2 = $soma2 % 11 < 2 ? 0 : 11 - $soma2 % 11;
-
-        if (( $cnpj[12] == $digito1 ) && ( $cnpj[13] == $digito2 )) {
-            return $cnpj;
-        } else {
+        $d = ((10 * $d) % 11) % 10;
+        if ($cpf[$c] != $d) {
             return false;
         }
     }
+    return true;
+}
+
+function checkDocumentCnpj($cnpj)
+{
+    if(empty($cnpj)) {
+        return false;
+    }
+
+    $cnpj = preg_replace('/[^0-9]/', '', $cnpj);
+
+    if (strlen($cnpj) != 14) {
+        return false;
+    }
+
+    if (preg_match('/(\d)\1{13}/', $cnpj)) {
+        return false;
+    }
+
+    $b = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+    for ($i = 0, $n = 0; $i < 12; $n += $cnpj[$i] * $b[++$i]);
+        if ($cnpj[12] != ((($n %= 11) < 2) ? 0 : 11 - $n)) {
+            return false;
+        }
+    
+    for ($i = 0, $n = 0; $i <= 12; $n += $cnpj[$i] * $b[$i++]);
+        if ($cnpj[13] != ((($n %= 11) < 2) ? 0 : 11 - $n)) {
+            return false;
+        }
+    
+    return true;
 }
 
 function checkFormatDate($expireDate) 
@@ -109,4 +96,12 @@ function checkFormatDate($expireDate)
         return false;
     }
     return true;
+}
+
+function getLastFourDigitsCard($card)
+{
+    if(empty($card)) {
+        return false;
+    }
+    return substr($card, -4);
 }
